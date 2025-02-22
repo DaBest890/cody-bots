@@ -36,7 +36,22 @@ To launch the bot in RuneMate, open the IntelliJ Terminal (Shortcut: CTRL + `) a
 
 RuneMate should now open, and you should see the woodcutter bot in the bot list.
 
-❓ Troubleshooting
+3️⃣ Find the Bot
+
+Go back to IntelliJ and copy the absolute path for "C:\Users\Your-User-Name\Your-Projects-Folder\Your-Project-Name\build\libs" This is where your built bots are put. 
+
+![Image](https://github.com/user-attachments/assets/4d4c45f8-cecc-4618-a3a2-1dd67a7d9db1)
+
+After you copy this absolute path paste it into RuneMate's local bot directories and click Select Folder.
+
+![Image](https://github.com/user-attachments/assets/799dd74e-1da4-4d8d-9e5d-8611af7f5aff)
+
+### ***Congratulations***
+You now have a working woodcutting bot to work with, and an environment to develop bots in.
+
+
+
+### ***❓ Troubleshooting ***
 Bot Not Appearing in RuneMate?
 Check if the compiled bot is in the correct directory:
 ``` pgsql
