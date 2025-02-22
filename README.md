@@ -6,7 +6,7 @@ This repository provides a **fully structured development environment** for Rune
 
 ### ✅ Prerequisites
 - **IntelliJ IDEA** (Recommended IDE) → [Download Here](https://www.jetbrains.com/idea/download/?section=windows)
-- **Java JDK 17** (Ensure it's installed and set up)
+- **Java JDK 17** (You can install this automatically upon making a New Java Project in IntelliJ by selecting the JDK dropdown list and selecting JDK 17 (Temurin).)
 - **RuneMate Client** (Download from [RuneMate](https://www.runemate.com))
 
 ---
