@@ -22,7 +22,7 @@ You want to click "Clone Repository" and drop this link inside: https://github.c
 
 ![Image](https://github.com/user-attachments/assets/de0488cf-9421-4b7d-a322-34e77eeba1eb)
 
-Remember to configure your directory correctly as you will need to find this as you develop. My directory for my projects is: C:\Users\Maximo\IdeaProjects and I am cloning the project inside the body-bots folder
+Remember to configure your directory correctly as you will need to find this as you develop. My directory for my projects is: C:\Users\Maximo\IdeaProjects and I am cloning the project inside the body-bots project folder
 
 Ensure the project location is correct
 
