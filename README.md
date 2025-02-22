@@ -64,10 +64,10 @@ Make sure Gradle built the bot successfully:
 ```
 
 Restart RuneMate and try again.
-By default, IntelliJ projects are stored in:
+By default, RuneMate bots are stored in:
 
 ```
-C:\Users\Your-User-Name\Your-Projects-Folder\
+C:\Users\Your-User-Name\Your-Projects-Folder\Your-Project-Name\build\libs
 ```
 You can set a different location, but make sure to adjust paths accordingly.
 
