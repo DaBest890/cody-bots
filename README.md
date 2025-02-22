@@ -27,7 +27,7 @@ Remember to configure your directory correctly as you will need to find this as 
 Ensure the project location is correct
 
 
-3️⃣ Run the Bot
+2️⃣ Run the Bot
 To launch the bot in RuneMate, open the IntelliJ Terminal (Shortcut: CTRL + `) and run:
 
 ``` 
