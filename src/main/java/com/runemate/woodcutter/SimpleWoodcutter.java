@@ -103,16 +103,16 @@ public class SimpleWoodcutter extends LoopingBot implements SettingsListener {
 
         //I've broken the logic into a couple of methods here, 'chopTrees()' and 'dropLogs()'. I decide which one to use by looking at
         //the current state of the bot.
-        if (settings.shouldDropLogs()) {
-            switch (state) {
-                case DROP -> chopTrees();
-                case CHOP -> dropLogs();
-            }
-        } else {
-            switch (state) {
-                case CHOP -> chopTrees();
-                case DROP -> dropLogs();
-            }
+        switch (state) {
+            case CHOP:
+                chopTrees();
+                break;
+            case DROP:
+                dropLogs();
+                break;
+            case BANK:
+                bankLogs();
+                break;
         }
     }
 
@@ -120,8 +120,13 @@ public class SimpleWoodcutter extends LoopingBot implements SettingsListener {
         //First thing we want to do when we're meant to be chopping is checking that we can actually chop!
         //If our inventory is full, we want to update the state to 'DROP' so that the bot will start dropping our logs.
         if (Inventory.isFull()) {
-            state = WoodcuttingState.DROP;
-            logger.info("Inventory is full, starting to drop logs");
+            if (settings.shouldDropLogs()) {
+                state = WoodcuttingState.DROP;
+                logger.info("Inventory is full, starting to drop logs");
+            } else {
+                state = WoodcuttingState.BANK;
+                logger.info("Inventory is full, heading to bank");
+            }
             return;
         }
 
@@ -248,12 +253,6 @@ public class SimpleWoodcutter extends LoopingBot implements SettingsListener {
 
         // Find nearest bank
         LocatableEntity bank = Banks.getLoaded().nearest();
-        if (bank == null) {
-            logger.warn("No bank found nearby!");
-            return;
-        }
-
-        // Ensure bank is not null before proceeding
         if (bank == null) {
             logger.warn("No bank found nearby!");
             return;
