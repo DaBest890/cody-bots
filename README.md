@@ -14,20 +14,18 @@ This repository provides a **fully structured development environment** for Rune
 ## 🔧 Installation & Setup
 
 ### **1️⃣ Clone the Repository**
-Open a terminal inside IntelliJ (Ctrl+`) and run:
-```
-git clone https://github.com/DaBest890/cody-bots.git
-```
+When you first open IntelliJ you will see this 
 
-Then open the cloned folder in IntelliJ.
+![Image](https://github.com/user-attachments/assets/f543da5f-4436-446a-8d2c-b2f5abbceed1)
 
-2️⃣ Set Up IntelliJ
-Open IntelliJ IDEA
-Click "New Project" → Select Java
-Ensure the project location is correct:
-``` 
-C:\Users\Your-User-Name\IdeaProjects\cody-bots\
-```
+You want to click "Clone Repository" and drop this link inside: https://github.com/DaBest890/cody-bots
+
+![Image](https://github.com/user-attachments/assets/de0488cf-9421-4b7d-a322-34e77eeba1eb)
+
+Remember to configure your directory correctly as you will need to find this as you develop. My directory for my projects is: C:\Users\Maximo\IdeaProjects and I am cloning the project inside the body-bots folder
+
+Ensure the project location is correct
+
 
 3️⃣ Run the Bot
 To launch the bot in RuneMate, open the IntelliJ Terminal (Shortcut: CTRL + `) and run:
