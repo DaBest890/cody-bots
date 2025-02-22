@@ -1,20 +1,34 @@
 package com.runemate.woodcutter;
 
 import com.runemate.game.api.hybrid.entities.*;
+import com.runemate.game.api.hybrid.entities.details.Locatable; // Needed for banking
 import com.runemate.game.api.hybrid.local.*;
 import com.runemate.game.api.hybrid.local.hud.interfaces.*;
+import com.runemate.game.api.hybrid.local.hud.interfaces.Bank; // Needed for bank interactions
+import com.runemate.game.api.hybrid.local.hud.interfaces.Inventory; // Needed for checking items
 import com.runemate.game.api.hybrid.location.*;
-import com.runemate.game.api.hybrid.location.navigation.cognizant.*;
 import com.runemate.game.api.hybrid.region.*;
+import com.runemate.game.api.hybrid.region.Banks; // Required for finding the closest bank
+import com.runemate.game.api.hybrid.region.Players; // Needed for player interactions
 import com.runemate.game.api.hybrid.util.calculations.*;
+import com.runemate.game.api.hybrid.util.calculations.Random; // Helps with antiban behavior
 import com.runemate.game.api.script.*;
 import com.runemate.game.api.script.framework.*;
 import com.runemate.game.api.script.framework.listeners.*;
 import com.runemate.game.api.script.framework.listeners.events.*;
 import com.runemate.ui.setting.annotation.open.*;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import com.runemate.game.api.hybrid.location.navigation.cognizant.ScenePath;
+import com.runemate.game.api.hybrid.entities.LocatableEntity;
+import com.runemate.game.api.hybrid.util.calculations.Distance;
 
-/*
+
+
+
+
+
+/* testing
  * LoopingBot is the framework I recommend for most people. The other options are TaskBot and TreeBot which each have their own
  * use-cases, but realistically LoopingBot is the simplest in almost all cases.
  *
@@ -63,6 +77,14 @@ public class SimpleWoodcutter extends LoopingBot implements SettingsListener {
     @Override
     public void onStart(final String... arguments) {
         getEventDispatcher().addListener(this);
+        // Immediately set the initial state based on user settings
+        if (settings.shouldDropLogs()) {
+            state = WoodcuttingState.DROP;
+            logger.info("User has selected to drop logs. Bot will drop logs.");
+        } else {
+            state = WoodcuttingState.BANK;
+            logger.info("User has selected to bank logs. Bot will bank logs.");
+        }
     }
 
     /*
@@ -83,9 +105,16 @@ public class SimpleWoodcutter extends LoopingBot implements SettingsListener {
 
         //I've broken the logic into a couple of methods here, 'chopTrees()' and 'dropLogs()'. I decide which one to use by looking at
         //the current state of the bot.
-        switch (state) {
-            case CHOP -> chopTrees();
-            case DROP -> dropLogs();
+        if (settings.shouldDropLogs()) {
+            switch (state) {
+                case DROP -> chopTrees();
+                case CHOP -> dropLogs();
+            }
+        } else {
+            switch (state) {
+                case CHOP -> chopTrees();
+                case DROP -> dropLogs();
+            }
         }
     }
 
@@ -211,6 +240,58 @@ public class SimpleWoodcutter extends LoopingBot implements SettingsListener {
             logger.info("Successfully dropped logs");
         }
     }
+
+    private void bankLogs() {
+        if (!Inventory.contains(settings.getTreeType().getLogName())) {
+            state = WoodcuttingState.CHOP;
+            logger.info("No logs left, returning to chopping.");
+            return;
+        }
+
+        // Find nearest bank
+        LocatableEntity bank = Banks.getLoaded().nearest();
+        if (bank == null) {
+            logger.warn("No bank found nearby!");
+            return;
+        }
+
+        // Ensure bank is not null before proceeding
+        if (bank == null) {
+            logger.warn("No bank found nearby!");
+            return;
+        }
+
+        // Ensure the bank is visible before interacting
+        if (bank.getVisibility() < 50) {
+            Camera.turnTo(bank);
+            Execution.delay(500, 1000); // Add small delay for realistic camera movement
+        }
+
+        // Move to the bank if too far away
+        if (Distance.to(bank) > 8) {
+            ScenePath path = ScenePath.buildTo(bank);
+            if (path != null && path.step()) {
+                logger.info("Walking to the bank...");
+                Execution.delayUntil(() -> Distance.to(bank) <= 3, 5000); // Wait until close
+            } else {
+                logger.warn("Failed to generate a path to the bank!");
+            }
+            return; // Exit function to allow movement before interacting
+        }
+
+
+        // Interact with the bank
+        if (bank.interact("Bank")) {
+            if (Execution.delayUntil(Bank::isOpen, 2000)) {
+                Bank.depositInventory();
+                Execution.delay(800, 1200); // Simulate human reaction time
+                Bank.close();
+                state = WoodcuttingState.CHOP;
+                logger.info("Banked logs, resuming chopping.");
+            }
+        }
+    }
+
 
     @Override
     public void onSettingChanged(SettingChangedEvent event) {

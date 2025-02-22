@@ -24,4 +24,10 @@ public interface WoodcuttingSettings extends Settings {
         return TreeType.NORMAL;
     }
 
+    @Setting(key = "dropLogs", title = "Drop logs instead of banking?", order = 2)
+    default boolean shouldDropLogs() {
+        return false; // Default is now banking logs instead of dropping
+    }
+
+
 }
