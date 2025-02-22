@@ -67,7 +67,7 @@ Restart RuneMate and try again.
 By default, IntelliJ projects are stored in:
 
 ```
-C:\Users\Your-User-Name\IdeaProjects\
+C:\Users\Your-User-Name\Your-Projects-Folder\
 ```
 You can set a different location, but make sure to adjust paths accordingly.
 
