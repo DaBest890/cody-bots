@@ -54,8 +54,8 @@ You now have a working woodcutting bot to work with, and an environment to devel
 ### ***❓ Troubleshooting ***
 Bot Not Appearing in RuneMate?
 Check if the compiled bot is in the correct directory:
-``` pgsql
-C:\Users\Your-User-Name\IdeaProjects\cody-bots\build\libs
+```
+C:\Users\Your-User-Name\Your-Projects-Folder\cody-bots\build\libs
 ```
 
 Make sure Gradle built the bot successfully:
