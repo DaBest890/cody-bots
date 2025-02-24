@@ -161,18 +161,63 @@ public class SimpleWoodcutter extends LoopingBot implements SettingsListener {
             while (!path.step() && attempts < maxRetries) {
                 Execution.delay(300, 500);
                 attempts++;
+
+                // If we haven't moved for 3+ attempts, we might be stuck
+                if (attempts >= 3 && !Players.getLocal().isMoving()) {
+                    logger.warn("⚠️ Bot appears to be stuck. Considering path recalculation...");
+                    break;
+                }
             }
 
             if (attempts >= maxRetries) {
-                logger.warn("⚠️ Bot failed to follow path to the bank after multiple attempts!");
-                return;  // Exit to prevent further errors
+                logger.warn("⚠️ Bot failed to follow path after multiple attempts! Recalculating...");
+
+                // Try recalculating the path once
+                path = pathfinder.pathBuilder()
+                        .start(Players.getLocal())
+                        .destination(bankPosition)
+                        .enableTeleports(true)  // ✅ Allow teleporting
+                        .findPath();
+
+                if (path == null) {
+                    logger.error("❌ Recalculated path still failed! Returning to chopping.");
+                    state = WoodcuttingState.CHOP;
+                    return;
+                }
+
+                // Retry stepping along the new path
+                attempts = 0;
+                while (!path.step() && attempts < maxRetries) {
+                    Execution.delay(300, 500);
+                    attempts++;
+                }
+
+                if (attempts >= maxRetries) {
+                    logger.error("❌ Even after recalculating, bot could not follow path! Returning to chopping.");
+                    state = WoodcuttingState.CHOP;
+                    return;
+                }
             }
 
             boolean reachedBank = Execution.delayUntil(() -> Players.getLocal().distanceTo(bankPosition) < 5, 5000);
 
             if (!reachedBank) {
-                logger.error("❌ Bot failed to reach the bank even after stepping through the path!");
-                return;  // Stop execution to avoid stuck behavior
+                logger.error("❌ Bot failed to reach the bank! Attempting last resort teleport...");
+
+                if (Bank.open()) {
+                    logger.warn("⚠️ Trying to bank remotely instead...");
+                    if (Execution.delayUntil(Bank::isOpen, 2000)) {
+                        Bank.depositInventory();
+                        Execution.delay(800, 1200);
+                        Bank.close();
+                        state = WoodcuttingState.CHOP;
+                        logger.info("✅ Successfully banked remotely, resuming chopping.");
+                        return;
+                    }
+                }
+
+                logger.error("❌ Even the failsafe teleport failed. Returning to chopping.");
+                state = WoodcuttingState.CHOP;
             }
         }
 
